@@ -1,38 +1,15 @@
-import groovy.json.JsonSlurper
-
-String basePath = 'multipleBranches'
-String repo = 'sheehan/grails-example'
-
-folder(basePath) {
-    description 'This example shows how to create a set of jobs for each github branch, each in its own folder.'
-}
-
-URL branchUrl = "https://api.github.com/repos/$repo/branches".toURL()
-List branches = new JsonSlurper().parse(branchUrl.newReader())
-branches.each { branch ->
-
-    String safeBranchName = branch.name.replaceAll('/', '-')
-
-    folder "$basePath/$safeBranchName"
-
-    job("$basePath/$safeBranchName/grails-example-build") {
+def project = 'quidryan/aws-sdk-test'
+def branchApi = new URL("https://api.github.com/repos/${project}/branches")
+def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
+branches.each {
+    def branchName = it.name
+    def jobName = "${project}-${branchName}".replaceAll('/','-')
+    job(jobName) {
         scm {
-            github repo, branch.name
-        }
-        triggers {
-            scm 'H/30 * * * *'
+            git("git://github.com/${project}.git", branchName)
         }
         steps {
-            gradle 'test-app war', true
-        }
-    }
-
-    job("$basePath/$safeBranchName/grails-example-deploy") {
-        parameters {
-            stringParam 'host'
-        }
-        steps {
-            shell 'scp war file; restart...'
+            maven("test -Dproject.name=${project}/${branchName}")
         }
     }
 }
