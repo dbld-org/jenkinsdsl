@@ -9,8 +9,8 @@ def branchApi = new URL("https://api.github.com/repos/${project}/branches")
 def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
 branches.each {
     def branchName = it.name
-    def jobName = "${basePath}/${project}-${branchName}".replaceAll('/','-')
-    job(jobName) {
+    def jobName = "${project}-${branchName}".replaceAll('/','-')
+    job("${basePath}/${jobName}") {
         scm {
             git("git://github.com/${project}.git", branchName)
         }
