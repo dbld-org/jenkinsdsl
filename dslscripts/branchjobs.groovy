@@ -12,10 +12,17 @@ branches.each {
     def jobName = "${project}-${branchName}".replaceAll('/','-')
     job("${basePath}/${jobName}") {
         scm {
-            git("git://github.com/${project}.git", branchName)
+              remote {
+                github("${project}/${branchName}", 'ssh')
+                credentials('jenkins-github')
+                }
+            // git("git://github.com/${project}.git", branchName)
         }
         steps {
             maven("test -Dproject.name=${project}/${branchName}")
         }
     }
 }
+
+
+          
