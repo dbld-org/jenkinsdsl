@@ -5,7 +5,7 @@ repoApi = new URL("https://api.github.com/orgs/${owner}/repos?per_page=200")
 repos =
         new groovy.json.JsonSlurper()
                 .parse(repoApi.newReader(
-                requestProperties: [Authorization: "token f19bb0c7f0a7b4305c0d802aed8bc975ee515c90"]))
+                requestProperties: [Authorization: "token xxxxxx"]))
 
 
 repos.findAll { it.name.startsWith('flexifin-') }.each {
@@ -24,7 +24,7 @@ repos.findAll { it.name.startsWith('flexifin-') }.each {
     def branches =
             new groovy.json.JsonSlurper()
                     .parse(branchApi.newReader(
-                    requestProperties: [Authorization: "token f19bb0c7f0a7b4305c0d802aed8bc975ee515c90"]))
+                    requestProperties: [Authorization: "token xxxxxx"]))
     branches.each {
         def branchName = it.name
         def jobName = "${repo}-${branchName}".replaceAll('/', '-')
